@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR & Barcode Studio Pro</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Libraries -->
+    <!-- QR Code Styling: Library canggih untuk QR berwarna & artistik -->
+    <script type="text/javascript" src="https://unpkg.com/qr-code-styling@1.5.0/lib/qr-code-styling.js"></script>
+    <!-- JsBarcode: Library standar untuk Barcode Linear -->
+    <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+    <!-- html2canvas untuk konversi SVG lebih baik -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700&display=swap');
+        
+        body { font-family: 'Outfit', sans-serif; background-color: #f3f4f6; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c7c7c7; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a0a0a0; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .input-group label {
+            @apply text-xs font-bold text-gray-500 uppercase tracking-wider mb-1 block;
+        }
+
+        .input-std {
+            @apply w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent p-2.5 transition-all;
+        }
+
+        .color-picker-wrapper {
+            @apply overflow-hidden rounded-full border border-gray-200 cursor-pointer shadow-sm w-8 h-8 flex-shrink-0;
+        }
+        
+        .color-picker-input {
+            @apply w-[150%] h-[150%] -m-[25%] cursor-pointer p-0 border-0;
+        }
+
+        .dot-style-btn {
+            @apply p-2 border rounded hover:bg-gray-50 text-xs transition-all cursor-pointer;
+        }
+
+        .dot-style-btn.active {
+            @apply bg-indigo-50 border-indigo-200 text-indigo-700;
+        }
+
+        @media (max-width: 1024px) {
+            .left-panel {
+                @apply absolute left-0 top-0 h-full w-full z-50 transform transition-transform duration-300;
+            }
+
+            .left-panel.hidden-mobile {
+                @apply -translate-x-full;
+            }
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Navbar -->
+    <nav class="bg-white border-b border-gray-200 px-6 py-3 flex justify-between items-center z-20 shadow-sm">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 text-white p-2 rounded-lg">
+                <i class="fa-solid fa-qrcode text-lg"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold text-gray-800 leading-none">QR Studio <span class="text-indigo-600">Pro</span></h1>
+                <p class="text-xs text-gray-400">Advanced Generator</p>
+            </div>
+        </div>
+        <div class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full hidden sm:block">
+            v2.1 • Fixed & Improved
+        </div>
+    </nav>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden relative">
+        
+        <!-- LEFT PANEL: Controls (Scrollable) -->
+        <div class="left-panel w-full lg:w-[400px] xl:w-[450px] bg-white border-r border-gray-200 flex flex-col overflow-y-auto z-10 shadow-lg lg:shadow-none">
+            
+            <!-- Close Button Mobile -->
+            <div class="lg:hidden flex justify-between items-center p-4 border-b border-gray-100">
+                <h2 class="font-semibold text-gray-800">Settings</h2>
+                <button onclick="closeMobilePanel()" class="text-gray-500 hover:text-gray-700">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Tabs -->
+            <div class="grid grid-cols-2 p-4 gap-2 border-b border-gray-100 sticky top-0 bg-white z-20">
+                <button onclick="setMode('qr')" id="btn-tab-qr" class="py-2.5 rounded-lg text-sm font-semibold bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 transition-all">
+                    <i class="fa-solid fa-qrcode mr-2"></i>QR Code
+                </button>
+                <button onclick="setMode('barcode')" id="btn-tab-barcode" class="py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all">
+                    <i class="fa-solid fa-barcode mr-2"></i>Barcode
+                </button>
+            </div>
+
+            <div class="p-6 space-y-6">
+                
+                <!-- CONTENT SECTION -->
+                <div id="section-content">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-2 text-xs">1</span>
+                        Isi Konten
+                    </h3>
+                    
+                    <!-- QR Types -->
+                    <div id="qr-types-container" class="mb-4">
+                        <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Tipe QR</label>
+                        <select id="qr-type" onchange="updateUI()" class="input-std">
+                            <option value="url">🔗 Website / URL</option>
+                            <option value="text">📝 Teks Biasa</option>
+                            <option value="wifi">📶 WiFi Login</option>
+                            <option value="whatsapp">💬 WhatsApp</option>
+                            <option value="email">📧 Email</option>
+                        </select>
+                    </div>
+
+                    <!-- Barcode Types -->
+                    <div id="barcode-types-container" class="mb-4 hidden">
+                        <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Format Barcode</label>
+                        <select id="barcode-format" onchange="generateBarcode()" class="input-std">
+                            <option value="CODE128">Code 128 (Auto)</option>
+                            <option value="EAN13">EAN-13 (Ritel)</option>
+                            <option value="UPC">UPC (Produk US)</option>
+                            <option value="CODE39">Code 39</option>
+                            <option value="ITF14">ITF-14</option>
+                        </select>
+                    </div>
+
+                    <!-- Input Fields (Dynamic) -->
+                    <div class="space-y-3">
+                        <!-- URL -->
+                        <div id="inp-grp-url" class="inp-group">
+                            <input type="text" id="val-url" placeholder="https://www.website.com" class="input-std" oninput="updatePreview()">
+                        </div>
+                        
+                        <!-- Text/Barcode Value -->
+                        <div id="inp-grp-text" class="inp-group hidden">
+                            <textarea id="val-text" rows="3" placeholder="Masukkan teks atau angka..." class="input-std" oninput="updatePreview()"></textarea>
+                        </div>
+
+                        <!-- WiFi -->
+                        <div id="inp-grp-wifi" class="inp-group hidden space-y-3">
+                            <input type="text" id="wifi-ssid" placeholder="Nama WiFi (SSID)" class="input-std" oninput="updatePreview()">
+                            <input type="text" id="wifi-pass" placeholder="Password WiFi" class="input-std" oninput="updatePreview()">
+                            <select id="wifi-enc" class="input-std" onchange="updatePreview()">
+                                <option value="WPA">WPA/WPA2</option>
+                                <option value="WEP">WEP</option>
+                                <option value="nopass">Tanpa Password</option>
+                            </select>
+                            <label class="flex items-center text-sm text-gray-600">
+                                <input type="checkbox" id="wifi-hidden" class="mr-2 rounded text-indigo-600" onchange="updatePreview()"> Hidden Network
+                            </label>
+                        </div>
+
+                        <!-- WhatsApp -->
+                        <div id="inp-grp-wa" class="inp-group hidden space-y-3">
+                            <input type="number" id="wa-num" placeholder="Nomor (e.g 628123...)" class="input-std" oninput="updatePreview()">
+                            <input type="text" id="wa-msg" placeholder="Pesan otomatis..." class="input-std" oninput="updatePreview()">
+                        </div>
+
+                        <!-- Email -->
+                        <div id="inp-grp-email" class="inp-group hidden space-y-3">
+                            <input type="email" id="email-addr" placeholder="alamat@email.com" class="input-std" oninput="updatePreview()">
+                            <input type="text" id="email-sub" placeholder="Subjek" class="input-std" oninput="updatePreview()">
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-100">
+
+                <!-- STYLE SECTION -->
+                <div id="section-style">
+                    <h3 class="text-sm font-bold text-gray-900 mb-4 flex items-center">
+                        <span class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center mr-2 text-xs">2</span>
+                        Kustomisasi Tampilan
+                    </h3>
+
+                    <!-- QR Specific Styles -->
+                    <div id="style-qr-controls" class="space-y-4">
+                        
+                        <!-- Style Shape -->
+                        <div>
+                            <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Bentuk Titik (Dots)</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button onclick="setQrDots('square')" data-type="square" class="dot-style-btn">Kotak</button>
+                                <button onclick="setQrDots('dots')" data-type="dots" class="dot-style-btn active">Titik</button>
+                                <button onclick="setQrDots('rounded')" data-type="rounded" class="dot-style-btn">Bulat</button>
+                                <button onclick="setQrDots('classy')" data-type="classy" class="dot-style-btn">Classy</button>
+                                <button onclick="setQrDots('classy-rounded')" data-type="classy-rounded" class="dot-style-btn">C-Round</button>
+                                <button onclick="setQrDots('extra-rounded')" data-type="extra-rounded" class="dot-style-btn">X-Round</button>
+                            </div>
+                        </div>
+
+                        <!-- Colors -->
+                        <div>
+                            <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Warna & Gradien</label>
+                            <div class="flex items-center gap-4 bg-white p-3 border rounded-lg">
+                                <div class="flex flex-col items-center gap-1">
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="color-1" value="#4f46e5" class="color-picker-input" onchange="updatePreview()">
+                                    </div>
+                                    <span class="text-[10px] text-gray-400">Utama</span>
+                                </div>
+                                <div class="h-px w-8 bg-gray-300"></div>
+                                <div class="flex flex-col items-center gap-1">
+                                    <div class="color-picker-wrapper">
+                                        <input type="color" id="color-2" value="#ec4899" class="color-picker-input" onchange="updatePreview()">
+                                    </div>
+                                    <span class="text-[10px] text-gray-400">Gradien</span>
+                                </div>
+                                <div class="flex-1 text-right">
+                                    <select id="gradient-type" class="text-xs border rounded p-1" onchange="updatePreview()">
+                                        <option value="none">Solid</option>
+                                        <option value="linear">Linear</option>
+                                        <option value="radial">Radial</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="mt-2 flex items-center justify-between">
+                                <span class="text-xs text-gray-500 font-medium">Warna Latar</span>
+                                <div class="color-picker-wrapper w-6 h-6">
+                                    <input type="color" id="bg-color" value="#ffffff" class="color-picker-input" onchange="updatePreview()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Logo -->
+                        <div>
+                            <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Logo Tengah</label>
+                            <input type="file" id="logo-input" accept="image/*" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 mb-2" onchange="handleLogoUpload()">
+                            <p class="text-[10px] text-gray-400">Upload ikon hati, clover, atau logo perusahaan.</p>
+                        </div>
+                    </div>
+
+                    <!-- Barcode Specific Styles -->
+                    <div id="style-barcode-controls" class="hidden space-y-4">
+                        <div>
+                            <label class="input-group text-xs font-bold text-gray-500 mb-2 block">Warna Barcode</label>
+                            <div class="color-picker-wrapper">
+                                <input type="color" id="barcode-color" value="#000000" class="color-picker-input" onchange="updatePreview()">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-xs font-bold text-gray-500">Lebar</label>
+                                <input type="range" id="bar-width" min="1" max="4" value="2" class="w-full" oninput="updatePreview()">
+                                <span class="text-[10px] text-gray-400" id="bar-width-val">2</span>
+                            </div>
+                            <div>
+                                <label class="text-xs font-bold text-gray-500">Tinggi</label>
+                                <input type="range" id="bar-height" min="30" max="150" value="80" class="w-full" oninput="updatePreview(); document.getElementById('bar-height-val').innerText = this.value;">
+                                <span class="text-[10px] text-gray-400" id="bar-height-val">80</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DOWNLOAD BUTTON MOBILE (Visible only on small screens) -->
+                <div class="lg:hidden">
+                    <button onclick="downloadCode()" class="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl shadow-lg hover:bg-indigo-700 transition-colors">
+                        <i class="fa-solid fa-download mr-2"></i>Download Gambar
+                    </button>
+                </div>
+                
+                <div class="h-10"></div> <!-- Spacer -->
+            </div>
+        </div>
+
+        <!-- RIGHT PANEL: Live Preview (Desktop & Mobile) -->
+        <div class="flex-1 bg-gray-100 relative flex flex-col items-center justify-center p-4 lg:p-10 hidden lg:flex lg:flex-1">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#6366f1 1px, transparent 1px); background-size: 20px 20px;"></div>
+
+            <!-- Canvas Container -->
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="glass-panel p-8 rounded-3xl shadow-2xl transition-all duration-500 hover:shadow-indigo-200 hover:scale-[1.02]">
+                    <div id="canvas-container" class="bg-white rounded-xl overflow-hidden flex items-center justify-center min-w-[300px] min-h-[300px]">
+                        <!-- QR Code will be injected here -->
+                    </div>
+                    <div class="mt-4 text-center">
+                        <p class="text-xs font-mono text-gray-400 uppercase tracking-widest" id="preview-label">QR PREVIEW</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Actions -->
+                <div class="mt-8 flex gap-4">
+                    <button onclick="downloadCode()" class="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full font-semibold shadow-lg shadow-indigo-200 transition-all transform hover:-translate-y-1 flex items-center gap-2">
+                        <i class="fa-solid fa-download"></i> Download PNG
+                    </button>
+                    <div class="relative group">
+                         <button class="px-4 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-full font-semibold shadow-md border border-gray-100 transition-all">
+                            <i class="fa-solid fa-ellipsis"></i>
+                        </button>
+                        <!-- Tooltip -->
+                        <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-32 bg-gray-800 text-white text-xs rounded py-1 px-2 text-center opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                            Opsi Lain
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Preview Toggle -->
+        <button onclick="toggleMobilePreview()" class="lg:hidden absolute bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg z-40">
+            <i class="fa-solid fa-eye"></i>
+        </button>
+    </div>
+
+    <script>
+        // --- VARIABLES ---
+        let mode = 'qr';
+        let qrCode; // Instance of QRCodeStyling
+        let uploadedLogo = null;
+        let selectedDotType = 'dots';
+
+        // --- INITIALIZATION ---
+        window.onload = function() {
+            // Init QR Code Styling Library
+            qrCode = new QRCodeStyling({
+                width: 300,
+                height: 300,
+                type: "svg",
+                data: "https://example.com",
+                image: "",
+                dotsOptions: {
+                    color: "#4f46e5",
+                    type: "dots"
+                },
+                backgroundOptions: {
+                    color: "#ffffff",
+                },
+                imageOptions: {
+                    crossOrigin: "anonymous",
+                    margin: 10
+                }
+            });
+
+            // Render Initial
+            document.getElementById('canvas-container').innerHTML = '';
+            qrCode.append(document.getElementById('canvas-container'));
+            
+            // Set Inputs
+            updateUI();
+        };
+
+        // --- MODE SWITCHING ---
+        function setMode(newMode) {
+            mode = newMode;
+            
+            const btnQr = document.getElementById('btn-tab-qr');
+            const btnBc = document.getElementById('btn-tab-barcode');
+            const qrTypeCont = document.getElementById('qr-types-container');
+            const bcTypeCont = document.getElementById('barcode-types-container');
+            const qrStyle = document.getElementById('style-qr-controls');
+            const bcStyle = document.getElementById('style-barcode-controls');
+            
+            // Reset Classes
+            btnQr.className = "py-2.5 rounded-lg text-sm font-semibold text-gray-500 hover:bg-gray-50 transition-all";
+            btnBc.className = btnQr.className;
+
+            if (mode === 'qr') {
+                btnQr.className = "py-2.5 rounded-lg text-sm font-semibold bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 transition-all";
+                qrTypeCont.classList.remove('hidden');
+                bcTypeCont.classList.add('hidden');
+                qrStyle.classList.remove('hidden');
+                bcStyle.classList.add('hidden');
+                updateUI(); // Show correct inputs
+                updatePreview();
+            } else {
+                btnBc.className = "py-2.5 rounded-lg text-sm font-semibold bg-indigo-50 text-indigo-700 ring-1 ring-indigo-200 transition-all";
+                qrTypeCont.classList.add('hidden');
+                bcTypeCont.classList.remove('hidden');
+                qrStyle.classList.add('hidden');
+                bcStyle.classList.remove('hidden');
+                
+                // Hide all QR inputs, show text input for barcode
+                document.querySelectorAll('.inp-group').forEach(el => el.classList.add('hidden'));
+                document.getElementById('inp-grp-text').classList.remove('hidden');
+                document.getElementById('preview-label').innerText = "BARCODE PREVIEW";
+                
+                generateBarcode();
+            }
+        }
+
+        // --- UI HANDLING ---
+        function updateUI() {
+            if (mode === 'barcode') return; // Handled by setMode
+
+            const type = document.getElementById('qr-type').value;
+            
+            // Hide all input groups first
+            document.querySelectorAll('.inp-group').forEach(el => el.classList.add('hidden'));
+
+            // Show relevant group
+            if (type === 'url') document.getElementById('inp-grp-url').classList.remove('hidden');
+            else if (type === 'text') document.getElementById('inp-grp-text').classList.remove('hidden');
+            else if (type === 'wifi') document.getElementById('inp-grp-wifi').classList.remove('hidden');
+            else if (type === 'whatsapp') document.getElementById('inp-grp-wa').classList.remove('hidden');
+            else if (type === 'email') document.getElementById('inp-grp-email').classList.remove('hidden');
+
+            document.getElementById('preview-label').innerText = "QR CODE PREVIEW";
+            updatePreview();
+        }
+
+        function setQrDots(type) {
+            selectedDotType = type;
+            
+            // Update button styles dengan lebih akurat
+            const buttons = document.querySelectorAll('[data-type]');
+            buttons.forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.type === type) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            updatePreview();
+        }
+
+        function handleLogoUpload() {
+            const file = document.getElementById('logo-input').files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    uploadedLogo = e.target.result;
+                    updatePreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // --- CORE GENERATION LOGIC ---
+
+        function getQRData() {
+            const type = document.getElementById('qr-type').value;
+            
+            if (type === 'url') return document.getElementById('val-url').value || "https://example.com";
+            if (type === 'text') return document.getElementById('val-text').value || "Hello World";
+            
+            if (type === 'wifi') {
+                const ssid = document.getElementById('wifi-ssid').value || "MyWiFi";
+                const pass = document.getElementById('wifi-pass').value || "";
+                const enc = document.getElementById('wifi-enc').value;
+                const hidden = document.getElementById('wifi-hidden').checked ? "true" : "false";
+                return `WIFI:S:${ssid};T:${enc};P:${pass};H:${hidden};;`;
+            }
+            
+            if (type === 'whatsapp') {
+                const num = document.getElementById('wa-num').value || "62800";
+                const msg = document.getElementById('wa-msg').value || "";
+                return `https://wa.me/${num}?text=${encodeURIComponent(msg)}`;
+            }
+            
+            if (type === 'email') {
+                const addr = document.getElementById('email-addr').value || "mail@example.com";
+                const sub = document.getElementById('email-sub').value || "";
+                return `mailto:${addr}?subject=${encodeURIComponent(sub)}`;
+            }
+            return "Error";
+        }
+
+        function updatePreview() {
+            if (mode === 'barcode') {
+                generateBarcode();
+                return;
+            }
+
+            // Get Colors & Gradients
+            const col1 = document.getElementById('color-1').value;
+            const col2 = document.getElementById('color-2').value;
+            const bg = document.getElementById('bg-color').value;
+            const gradType = document.getElementById('gradient-type').value;
+
+            // Configure Gradient Object
+            let dotsOptions = {
+                type: selectedDotType,
+                color: col1 
+            };
+
+            if (gradType !== 'none') {
+                dotsOptions.gradient = {
+                    type: gradType,
+                    rotation: 0,
+                    colorStops: [
+                        { offset: 0, color: col1 },
+                        { offset: 1, color: col2 }
+                    ]
+                };
+            }
+
+            // Update QR Lib
+            qrCode.update({
+                data: getQRData(),
+                image: uploadedLogo,
+                dotsOptions: dotsOptions,
+                backgroundOptions: { color: bg },
+                cornersSquareOptions: { type: selectedDotType === 'square' ? 'square' : 'extra-rounded', color: col1 },
+                cornersDotOptions: { type: selectedDotType === 'square' ? 'square' : 'dot', color: col1 }
+            });
+        }
+
+        function validateBarcodeValue(val, format) {
+            // Validasi panjang untuk format tertentu
+            if (format === 'EAN13') {
+                // EAN13 harus 13 digit
+                const digits = val.replace(/\D/g, '');
+                return digits.length === 13 ? digits : null;
+            }
+            if (format === 'UPC') {
+                // UPC harus 12 digit
+                const digits = val.replace(/\D/g, '');
+                return digits.length === 12 ? digits : null;
+            }
+            // CODE128, CODE39, ITF14 lebih fleksibel
+            return val;
+        }
+
+        function generateBarcode() {
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = '';
+            
+            const format = document.getElementById('barcode-format').value;
+            let val = document.getElementById('val-text').value;
+            
+            // Validasi input
+            let validatedVal = validateBarcodeValue(val, format);
+            
+            if (!validatedVal) {
+                // Gunakan default value berdasarkan format
+                const defaults = {
+                    'EAN13': '1234567890128',
+                    'UPC': '123456789012',
+                    'CODE128': 'EXAMPLE123',
+                    'CODE39': 'EXAMPLE-123',
+                    'ITF14': '12345678901234'
+                };
+                validatedVal = defaults[format] || 'EXAMPLE123';
+            }
+
+            // Buat SVG container
+            const svgContainer = document.createElement('div');
+            svgContainer.innerHTML = '<svg id="barcode-svg"></svg>';
+            container.appendChild(svgContainer);
+
+            try {
+                JsBarcode("#barcode-svg", validatedVal, {
+                    format: format,
+                    lineColor: document.getElementById('barcode-color').value,
+                    width: parseInt(document.getElementById('bar-width').value),
+                    height: parseInt(document.getElementById('bar-height').value),
+                    displayValue: true,
+                    background: "#ffffff",
+                    margin: 10
+                });
+            } catch (e) {
+                container.innerHTML = `<div class="text-red-500 text-sm font-bold text-center p-4">
+                    <p>Gagal generate ${format}</p>
+                    <p class="text-xs mt-2">${e.message}</p>
+                </div>`;
+            }
+        }
+
+        async function downloadCode() {
+            if (mode === 'qr') {
+                // QR Download
+                qrCode.download({ name: "qr_code_pro", extension: "png" });
+            } else {
+                // Barcode Download (Convert SVG to PNG dengan html2canvas)
+                try {
+                    const svgContainer = document.getElementById('canvas-container');
+                    
+                    const canvas = await html2canvas(svgContainer, {
+                        backgroundColor: '#ffffff',
+                        scale: 2,
+                        useCORS: true
+                    });
+
+                    const link = document.createElement('a');
+                    link.download = 'barcode_pro.png';
+                    link.href = canvas.toDataURL('image/png');
+                    link.click();
+                } catch (e) {
+                    // Fallback: Direct canvas approach
+                    const svg = document.querySelector('#barcode-svg');
+                    if (!svg) {
+                        alert('Tidak ada barcode untuk diunduh');
+                        return;
+                    }
+                    
+                    const svgRect = svg.getBoundingClientRect();
+                    const canvas = document.createElement('canvas');
+                    canvas.width = svgRect.width + 20;
+                    canvas.height = svgRect.height + 20;
+                    
+                    const ctx = canvas.getContext('2d');
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    const img = new Image();
+                    img.onload = () => {
+                        ctx.drawImage(img, 10, 10);
+                        const link = document.createElement('a');
+                        link.download = 'barcode_pro.png';
+                        link.href = canvas.toDataURL('image/png');
+                        link.click();
+                    };
+                    
+                    const serializer = new XMLSerializer();
+                    const svgStr = serializer.serializeToString(svg);
+                    img.src = 'data:image/svg+xml;base64,' + btoa(svgStr);
+                }
+            }
+        }
+
+        // --- MOBILE HELPERS ---
+        function closeMobilePanel() {
+            const leftPanel = document.querySelector('.left-panel');
+            leftPanel.classList.add('hidden-mobile');
+        }
+
+        function toggleMobilePreview() {
+            const rightPanel = document.querySelector('.flex-1');
+            rightPanel.classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
