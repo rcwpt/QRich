@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR & Barcode Studio Pro v4.5</title>
+    <title>QR & Barcode Studio Pro v4.7</title>
     <!-- Favicon: Vector QR Icon -->
     <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Cpath d='M3 21h7v-7H3v7zm0-10h.01M7 7h.01M17 7h.01M17 17h.01'/%3E%3C/svg%3E">
     
@@ -108,7 +108,7 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white leading-tight">QR Studio</h1>
-                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Pro v4.5</p>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Pro v4.7</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -154,7 +154,7 @@
                             <select id="qr-type" onchange="updateUI()" class="input-std appearance-none font-bold text-xs uppercase tracking-wide cursor-pointer">
                                 <option value="url">Website / Link</option>
                                 <option value="text">Custom Text</option>
-                                <option value="wifi">WiFi Access</option>
+                                <option value="wifi">WiFi Network</option>
                                 <option value="whatsapp">WhatsApp</option>
                                 <option value="email">Email</option>
                             </select>
@@ -177,15 +177,35 @@
                         </div>
 
                         <div id="inp-grp-wifi" class="hidden space-y-3">
-                            <div class="relative input-icon-wrap"><i class="fa-solid fa-wifi"></i><input id="wifi-ssid" placeholder="SSID (Name)" class="input-std" oninput="updatePreview()"></div>
-                            <div class="relative input-icon-wrap"><i class="fa-solid fa-key"></i><input id="wifi-pass" placeholder="Password" class="input-std" oninput="updatePreview()"></div>
-                            <div class="flex gap-2">
-                                <select id="wifi-enc" class="input-std" onchange="updatePreview()"><option value="WPA">WPA/2</option><option value="WEP">WEP</option><option value="nopass">Open</option></select>
-                                <label class="flex items-center px-3 border border-gray-200 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700"><input type="checkbox" id="wifi-hidden" onchange="updatePreview()" class="mr-2"> <span class="text-xs font-bold">Hidden</span></label>
+                            <div class="relative input-icon-wrap"><i class="fa-solid fa-wifi"></i><input id="wifi-ssid" placeholder="Network Name (SSID)" class="input-std" oninput="updatePreview()"></div>
+                            
+                            <!-- Security Type -->
+                            <div class="relative input-icon-wrap">
+                                <i class="fa-solid fa-shield-halved"></i>
+                                <select id="wifi-enc" class="input-std appearance-none" onchange="toggleWifiIdentity(); updatePreview()">
+                                    <option value="WPA">WPA/WPA2 (Personal)</option>
+                                    <option value="WPA3">WPA3 (SAE)</option>
+                                    <option value="WPA2-EAP">WPA2-EAP (Enterprise)</option>
+                                    <option value="WEP">WEP (Legacy)</option>
+                                    <option value="nopass">Open (No Password)</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down absolute right-3 !left-auto text-xs"></i>
                             </div>
+
+                            <!-- Identity Field (For Enterprise) -->
+                            <div id="wifi-identity-container" class="hidden">
+                                <div class="relative input-icon-wrap"><i class="fa-solid fa-user"></i><input id="wifi-identity" placeholder="Identity / Username" class="input-std" oninput="updatePreview()"></div>
+                            </div>
+
+                            <div class="relative input-icon-wrap"><i class="fa-solid fa-key"></i><input id="wifi-pass" placeholder="Password" class="input-std" oninput="updatePreview()"></div>
+                            
+                            <label class="flex items-center px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-700 cursor-pointer">
+                                <input type="checkbox" id="wifi-hidden" onchange="updatePreview()" class="w-4 h-4 mr-2 accent-blue-600"> 
+                                <span class="text-xs font-bold text-gray-600 dark:text-gray-300">Hidden Network</span>
+                            </label>
                         </div>
 
-                        <div id="inp-grp-wa" class="hidden space-y-3">
+                        <div id="inp-grp-whatsapp" class="hidden space-y-3">
                             <div class="relative input-icon-wrap"><i class="fa-solid fa-phone"></i><input type="number" id="wa-num" placeholder="628123456" class="input-std" oninput="updatePreview()"></div>
                             <div class="relative input-icon-wrap"><i class="fa-solid fa-comment"></i><input id="wa-msg" placeholder="Message..." class="input-std" oninput="updatePreview()"></div>
                         </div>
@@ -222,7 +242,7 @@
                             </div>
                         </div>
 
-                        <!-- Theme Presets (New) -->
+                        <!-- Theme Presets -->
                         <div>
                             <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Tema Cepat</h3>
                             <div class="grid grid-cols-6 gap-2">
@@ -411,9 +431,29 @@
         function updateUI() {
             if(mode === 'barcode') return;
             const type = document.getElementById('qr-type').value;
+            
+            // Hide all inputs
             document.querySelectorAll('[id^="inp-grp-"]').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`inp-grp-${type}`).classList.remove('hidden');
+            
+            // Show selected
+            const target = document.getElementById(`inp-grp-${type}`);
+            if (target) target.classList.remove('hidden');
+            
+            // Update wifi fields specifically if needed
+            if (type === 'wifi') toggleWifiIdentity();
+            
             updatePreview();
+        }
+
+        // Toggle Identity input for WPA2-EAP
+        function toggleWifiIdentity() {
+            const enc = document.getElementById('wifi-enc').value;
+            const identContainer = document.getElementById('wifi-identity-container');
+            if(enc === 'WPA2-EAP') {
+                identContainer.classList.remove('hidden');
+            } else {
+                identContainer.classList.add('hidden');
+            }
         }
 
         // Apply Theme Preset
@@ -427,13 +467,25 @@
             const type = document.getElementById('qr-type').value;
             if(type === 'url') return document.getElementById('val-url').value || 'https://example.com';
             if(type === 'text') return document.getElementById('val-text').value || 'Hello';
+            
             if(type === 'wifi') {
                 const s = document.getElementById('wifi-ssid').value || 'MyWiFi';
                 const p = document.getElementById('wifi-pass').value || '';
-                const e = document.getElementById('wifi-enc').value;
+                let e = document.getElementById('wifi-enc').value;
                 const h = document.getElementById('wifi-hidden').checked;
-                return `WIFI:S:${s};T:${e};P:${p};H:${h};;`;
+                
+                // Advanced WiFi Logic
+                if (e === 'WPA2-EAP') {
+                    const i = document.getElementById('wifi-identity').value || '';
+                    return `WIFI:S:${s};T:WPA2-EAP;P:${p};I:${i};H:${h};;`;
+                } else if (e === 'WPA3') {
+                    // WPA3 commonly uses SAE type
+                    return `WIFI:S:${s};T:SAE;P:${p};H:${h};;`;
+                } else {
+                    return `WIFI:S:${s};T:${e};P:${p};H:${h};;`;
+                }
             }
+            
             if(type === 'whatsapp') return `https://wa.me/${document.getElementById('wa-num').value}?text=${encodeURIComponent(document.getElementById('wa-msg').value)}`;
             if(type === 'email') return `mailto:${document.getElementById('email-addr').value}?subject=${encodeURIComponent(document.getElementById('email-sub').value)}`;
             return 'err';
