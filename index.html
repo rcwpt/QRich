@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>QR & Barcode Studio Pro v4.4</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔳</text></svg>">
+    <title>QR & Barcode Studio Pro v4.5</title>
+    <!-- Favicon: Vector QR Icon -->
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%234f46e5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='7' height='7'/%3E%3Crect x='14' y='3' width='7' height='7'/%3E%3Crect x='14' y='14' width='7' height='7'/%3E%3Cpath d='M3 21h7v-7H3v7zm0-10h.01M7 7h.01M17 7h.01M17 17h.01'/%3E%3C/svg%3E">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -67,14 +68,26 @@
         .blob-1 { top: -10%; left: -10%; width: 300px; height: 300px; background: #60a5fa; }
         .blob-2 { bottom: -10%; right: -10%; width: 300px; height: 300px; background: #3b82f6; }
 
+        .dot-style-btn {
+            @apply p-2 border rounded-lg text-[10px] font-semibold text-center transition-all hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 dark:text-gray-300;
+        }
+        .dot-style-btn.active {
+            @apply bg-blue-50 border-blue-200 text-blue-600 dark:bg-blue-900/30 dark:border-blue-700 dark:text-blue-300;
+        }
+
+        .theme-btn {
+            width: 100%; height: 32px; border-radius: 8px; cursor: pointer; transition: transform 0.2s;
+            border: 2px solid transparent;
+        }
+        .theme-btn:hover { transform: scale(1.05); }
+        .theme-btn:active { transform: scale(0.95); }
+
         /* Mobile View Logic */
         @media (max-width: 1024px) {
             .mobile-hidden { display: none !important; }
             .mobile-visible { display: flex !important; }
-            /* When preview is active */
             body.preview-active .left-panel { display: none; }
             body.preview-active .right-panel { display: flex; }
-            /* When preview is inactive (default) */
             body:not(.preview-active) .left-panel { display: flex; width: 100%; }
             body:not(.preview-active) .right-panel { display: none; }
         }
@@ -95,14 +108,13 @@
             </div>
             <div>
                 <h1 class="text-xl font-bold text-gray-900 dark:text-white leading-tight">QR Studio</h1>
-                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Pro v4.4</p>
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 font-medium">Pro v4.5</p>
             </div>
         </div>
         <div class="flex items-center gap-2">
             <button onclick="toggleTheme()" class="w-9 h-9 rounded-lg bg-gray-100 dark:bg-slate-800 flex items-center justify-center text-gray-600 dark:text-amber-400">
                 <i id="theme-icon" class="fa-solid fa-moon"></i>
             </button>
-            <!-- Mobile Preview Toggle in Navbar for better visibility -->
             <button onclick="toggleMobilePreview()" id="nav-preview-btn" class="lg:hidden w-24 h-9 rounded-lg bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 text-xs font-bold flex items-center justify-center gap-2">
                 <i class="fa-solid fa-eye"></i> <span>Preview</span>
             </button>
@@ -195,30 +207,50 @@
                     <div class="h-px bg-gray-100 dark:bg-slate-700"></div>
 
                     <!-- Customization -->
-                    <div id="style-controls" class="space-y-4">
-                        <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest">Style</h3>
+                    <div id="style-controls" class="space-y-6">
                         
-                        <!-- Dots -->
-                        <div id="qr-dots-style" class="grid grid-cols-4 gap-2">
-                            <button onclick="setQrDots('square')" class="p-2 border rounded-lg text-xs hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600">Square</button>
-                            <button onclick="setQrDots('dots')" class="p-2 border rounded-lg text-xs bg-blue-50 border-blue-200 text-blue-600 font-bold">Dots</button>
-                            <button onclick="setQrDots('rounded')" class="p-2 border rounded-lg text-xs hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600">Round</button>
-                            <button onclick="setQrDots('extra-rounded')" class="p-2 border rounded-lg text-xs hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600">Extra</button>
+                        <!-- Style Grid (Restored Full) -->
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Pola Titik</h3>
+                            <div id="qr-dots-style" class="grid grid-cols-3 gap-2">
+                                <button onclick="setQrDots('square', this)" class="dot-style-btn">Square</button>
+                                <button onclick="setQrDots('dots', this)" class="dot-style-btn active">Dots</button>
+                                <button onclick="setQrDots('rounded', this)" class="dot-style-btn">Rounded</button>
+                                <button onclick="setQrDots('classy', this)" class="dot-style-btn">Classy</button>
+                                <button onclick="setQrDots('classy-rounded', this)" class="dot-style-btn">C-Round</button>
+                                <button onclick="setQrDots('extra-rounded', this)" class="dot-style-btn">X-Round</button>
+                            </div>
                         </div>
 
-                        <!-- Colors -->
-                        <div class="flex gap-4">
-                            <div class="flex-1">
-                                <label class="text-[10px] font-bold text-gray-500 mb-1 block">Primary</label>
-                                <input type="color" id="color-1" value="#3b82f6" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
+                        <!-- Theme Presets (New) -->
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Tema Cepat</h3>
+                            <div class="grid grid-cols-6 gap-2">
+                                <button onclick="applyTheme('#6366f1', '#a855f7')" class="theme-btn" style="background: linear-gradient(135deg, #6366f1, #a855f7)" title="Indigo"></button>
+                                <button onclick="applyTheme('#3b82f6', '#06b6d4')" class="theme-btn" style="background: linear-gradient(135deg, #3b82f6, #06b6d4)" title="Ocean"></button>
+                                <button onclick="applyTheme('#f59e0b', '#ef4444')" class="theme-btn" style="background: linear-gradient(135deg, #f59e0b, #ef4444)" title="Sunset"></button>
+                                <button onclick="applyTheme('#10b981', '#059669')" class="theme-btn" style="background: linear-gradient(135deg, #10b981, #059669)" title="Forest"></button>
+                                <button onclick="applyTheme('#ec4899', '#db2777')" class="theme-btn" style="background: linear-gradient(135deg, #ec4899, #db2777)" title="Berry"></button>
+                                <button onclick="applyTheme('#1e293b', '#0f172a')" class="theme-btn" style="background: linear-gradient(135deg, #1e293b, #0f172a)" title="Dark"></button>
                             </div>
-                            <div class="flex-1">
-                                <label class="text-[10px] font-bold text-gray-500 mb-1 block">Gradient</label>
-                                <input type="color" id="color-2" value="#2563eb" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
-                            </div>
-                            <div class="flex-1">
-                                <label class="text-[10px] font-bold text-gray-500 mb-1 block">Bg</label>
-                                <input type="color" id="bg-color" value="#ffffff" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
+                        </div>
+
+                        <!-- Manual Colors -->
+                        <div>
+                            <h3 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Warna Manual</h3>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="text-[10px] font-bold text-gray-500 mb-1 block">Utama</label>
+                                    <input type="color" id="color-1" value="#3b82f6" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] font-bold text-gray-500 mb-1 block">Gradien</label>
+                                    <input type="color" id="color-2" value="#2563eb" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
+                                </div>
+                                <div class="flex-1">
+                                    <label class="text-[10px] font-bold text-gray-500 mb-1 block">Latar</label>
+                                    <input type="color" id="bg-color" value="#ffffff" class="w-full h-10 rounded-lg cursor-pointer border-0 p-0" onchange="updatePreview()">
+                                </div>
                             </div>
                         </div>
 
@@ -237,8 +269,8 @@
                 <div id="tab-scanner" class="hidden space-y-4">
                     <div class="bg-gray-100 dark:bg-slate-700/50 rounded-xl p-6 text-center border-2 border-dashed border-gray-300 dark:border-slate-600">
                         <i class="fa-solid fa-camera text-3xl text-gray-400 mb-3"></i>
-                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Point camera at a code</p>
-                        <button onclick="startCamera()" class="btn-primary w-full mb-2"><i class="fa-solid fa-video mr-2"></i> Start Camera</button>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mb-4">Arahkan kamera ke kode</p>
+                        <button onclick="startCamera()" class="btn-primary w-full mb-2"><i class="fa-solid fa-video mr-2"></i> Buka Kamera</button>
                         <button onclick="document.getElementById('scan-img').click()" class="w-full py-3 rounded-xl bg-white dark:bg-slate-600 font-bold text-sm border shadow-sm"><i class="fa-solid fa-upload mr-2"></i> Upload File</button>
                         <input type="file" id="scan-img" class="hidden" accept="image/*" onchange="scanImageFile()">
                     </div>
@@ -250,10 +282,10 @@
                     </div>
 
                     <div id="scan-result" class="hidden p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl">
-                        <p class="text-xs font-bold text-green-700 dark:text-green-400 mb-1">RESULT</p>
+                        <p class="text-xs font-bold text-green-700 dark:text-green-400 mb-1">HASIL</p>
                         <p id="result-text" class="text-sm font-mono break-all mb-3 text-gray-800 dark:text-gray-200">...</p>
                         <div class="flex gap-2">
-                            <button onclick="copyResult()" class="flex-1 py-2 bg-white dark:bg-slate-700 text-xs font-bold rounded shadow-sm">Copy</button>
+                            <button onclick="copyResult()" class="flex-1 py-2 bg-white dark:bg-slate-700 text-xs font-bold rounded shadow-sm">Salin</button>
                             <button onclick="useResult()" class="flex-1 py-2 bg-green-600 text-white text-xs font-bold rounded shadow-sm">Edit</button>
                         </div>
                     </div>
@@ -261,9 +293,8 @@
             </div>
         </div>
 
-        <!-- RIGHT PANEL: Preview (Hidden on mobile by default) -->
+        <!-- RIGHT PANEL: Preview -->
         <div class="right-panel w-full lg:flex-1 bg-gray-100 dark:bg-slate-900 flex flex-col items-center justify-center p-6 relative lg:flex">
-            <!-- Mobile Back Button -->
             <button onclick="toggleMobilePreview()" class="lg:hidden absolute top-4 left-4 w-10 h-10 rounded-full bg-white dark:bg-slate-800 shadow-md flex items-center justify-center z-50">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
@@ -289,8 +320,8 @@
         let videoStream = null;
         let codeReader = null;
         let scanInterval = null;
+        let selectedDotType = 'dots';
 
-        // Init
         window.addEventListener('load', () => {
             if (window.ZXing) codeReader = new ZXing.BrowserMultiFormatReader();
             
@@ -305,14 +336,12 @@
             qrCode.append(document.getElementById('canvas-container'));
             updateUI();
             
-            // Check theme
             if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                 document.documentElement.classList.add('dark');
                 document.getElementById('theme-icon').className = 'fa-solid fa-sun';
             }
         });
 
-        // Theme Toggle
         function toggleTheme() {
             const html = document.documentElement;
             const isDark = html.classList.toggle('dark');
@@ -320,7 +349,6 @@
             document.getElementById('theme-icon').className = isDark ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
         }
 
-        // Mobile View Toggle
         function toggleMobilePreview() {
             const body = document.body;
             const btn = document.getElementById('nav-preview-btn');
@@ -330,17 +358,15 @@
                 btn.innerHTML = '<i class="fa-solid fa-eye"></i> <span>Preview</span>';
             } else {
                 body.classList.add('preview-active');
-                updatePreview(); // Ensure fresh render
+                updatePreview();
                 btn.innerHTML = '<i class="fa-solid fa-pen"></i> <span>Edit</span>';
             }
         }
 
-        // Tab Switching
         function switchTab(tab) {
             document.querySelectorAll('[id^="tab-"]').forEach(el => el.classList.add('hidden'));
             document.getElementById(`tab-${tab}`).classList.remove('hidden');
             
-            // Button Styles
             const btnGen = document.getElementById('btn-generator');
             const btnScan = document.getElementById('btn-scanner');
             const activeClass = "bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800";
@@ -356,7 +382,6 @@
             }
         }
 
-        // QR/Barcode Mode
         function setMode(newMode) {
             mode = newMode;
             const btnQr = document.getElementById('btn-sub-qr');
@@ -368,8 +393,6 @@
                 document.getElementById('qr-inputs').classList.remove('hidden');
                 document.getElementById('style-controls').classList.remove('hidden');
                 document.getElementById('barcode-inputs').classList.add('hidden');
-                
-                // Reset container for QR
                 document.getElementById('canvas-container').innerHTML = '';
                 qrCode.append(document.getElementById('canvas-container'));
                 updateUI();
@@ -379,15 +402,12 @@
                 document.getElementById('qr-inputs').classList.add('hidden');
                 document.getElementById('style-controls').classList.add('hidden');
                 document.getElementById('barcode-inputs').classList.remove('hidden');
-                
-                // Show text input for barcode
                 document.querySelectorAll('[id^="inp-grp-"]').forEach(el => el.classList.add('hidden'));
                 document.getElementById('inp-grp-text').classList.remove('hidden');
                 generateBarcode();
             }
         }
 
-        // UI Updates
         function updateUI() {
             if(mode === 'barcode') return;
             const type = document.getElementById('qr-type').value;
@@ -396,7 +416,13 @@
             updatePreview();
         }
 
-        // Preview Logic
+        // Apply Theme Preset
+        function applyTheme(c1, c2) {
+            document.getElementById('color-1').value = c1;
+            document.getElementById('color-2').value = c2;
+            updatePreview();
+        }
+
         function getQRData() {
             const type = document.getElementById('qr-type').value;
             if(type === 'url') return document.getElementById('val-url').value || 'https://example.com';
@@ -423,10 +449,13 @@
                 data: getQRData(),
                 image: uploadedLogo,
                 dotsOptions: {
+                    type: selectedDotType,
                     color: c1,
                     gradient: { type: 'linear', rotation: 45, colorStops: [{offset:0, color:c1}, {offset:1, color:c2}] }
                 },
-                backgroundOptions: { color: document.getElementById('bg-color').value }
+                backgroundOptions: { color: document.getElementById('bg-color').value },
+                cornersSquareOptions: { type: selectedDotType === 'square' ? 'square' : 'extra-rounded', color: c1 },
+                cornersDotOptions: { type: selectedDotType === 'square' ? 'square' : 'dot', color: c1 }
             });
         }
 
@@ -444,14 +473,22 @@
             }
         }
 
-        // Helper Functions
-        function setQrDots(t) {
-            qrCode.update({ dotsOptions: { type: t === 'square' ? 'square' : 'dots' }, cornersSquareOptions: { type: t==='square'?'square':'extra-rounded' } });
+        function setQrDots(t, btn) {
+            selectedDotType = t;
+            // Reset buttons
+            document.querySelectorAll('.dot-style-btn').forEach(b => {
+                b.classList.remove('active');
+            });
+            // Set active
+            if(btn) btn.classList.add('active');
+            updatePreview();
         }
+
         function handleLogoUpload() {
             const f = document.getElementById('logo-input').files[0];
             if(f) { const r = new FileReader(); r.onload = e => { uploadedLogo = e.target.result; updatePreview(); }; r.readAsDataURL(f); }
         }
+
         async function downloadCode() {
             if(mode === 'qr') qrCode.download({ name: 'qr', extension: 'png' });
             else {
