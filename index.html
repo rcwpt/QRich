@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QR & Barcode Studio Pro v4</title>
+    <title>QR & Barcode Studio Pro v4.2</title>
+    <!-- Favicon (Emoji Style) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔳</text></svg>">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -37,30 +39,14 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap');
         
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; }
         
-        body {
-            font-family: 'Outfit', sans-serif;
-        }
-        
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: #475569;
-        }
+        /* Smooth Scrolling */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #475569; }
 
         .glass-panel {
             background: rgba(255, 255, 255, 0.75);
@@ -74,384 +60,76 @@
 
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: white;
-            font-weight: 600;
-            border: none;
-            border-radius: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
+            color: white; font-weight: 600; border: none; border-radius: 0.75rem; padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
-
-        .btn-primary:hover {
-            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
-            transform: translateY(-2px);
-        }
-
-        .btn-primary:active {
-            transform: translateY(0);
-        }
+        .btn-primary:hover { box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4); transform: translateY(-2px); }
+        .btn-primary:active { transform: translateY(0); }
 
         .btn-secondary {
-            background: #f3f4f6;
-            color: #1f2937;
-            border: 1px solid #e5e7eb;
-            font-weight: 600;
-            border-radius: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            background: #f3f4f6; color: #1f2937; border: 1px solid #e5e7eb;
+            font-weight: 600; border-radius: 0.75rem; padding: 0.75rem 1.5rem;
+            transition: all 0.3s ease; cursor: pointer;
         }
+        .dark .btn-secondary { background: #334155; color: #f1f5f9; border-color: #475569; }
+        .btn-secondary:hover { background: #e5e7eb; }
+        .dark .btn-secondary:hover { background: #475569; }
 
-        .dark .btn-secondary {
-            background: #334155;
-            color: #f1f5f9;
-            border-color: #475569;
-        }
-
-        .btn-secondary:hover {
-            background: #e5e7eb;
-        }
-
-        .dark .btn-secondary:hover {
-            background: #475569;
-        }
-
-        .input-icon-wrap {
-            position: relative;
-            display: flex;
-            align-items: center;
-        }
-
+        .input-icon-wrap { position: relative; display: flex; align-items: center; }
         .input-icon-wrap i {
-            position: absolute;
-            left: 1rem;
-            color: #9ca3af;
-            font-size: 0.875rem;
-            pointer-events: none;
-            transition: color 0.3s ease;
+            position: absolute; left: 1rem; color: #9ca3af; font-size: 0.875rem;
+            pointer-events: none; transition: color 0.3s ease;
         }
-
-        .dark .input-icon-wrap i {
-            color: #64748b;
-        }
+        .dark .input-icon-wrap i { color: #64748b; }
 
         .input-std {
-            width: 100%;
-            padding-left: 2.5rem;
-            padding-right: 1rem;
-            padding-top: 0.75rem;
-            padding-bottom: 0.75rem;
-            background-color: #f9fafb;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            color: #1f2937;
-            transition: all 0.3s ease;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-            outline: none;
+            width: 100%; padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background-color: #f9fafb; border: 1px solid #e5e7eb; border-radius: 0.75rem;
+            font-size: 0.875rem; color: #1f2937; transition: all 0.3s ease; outline: none;
         }
-
-        .dark .input-std {
-            background-color: #334155;
-            border-color: #475569;
-            color: #f1f5f9;
-        }
-
-        .input-std:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1), 0 1px 2px rgba(0, 0, 0, 0.05);
-        }
-
-        .input-std::placeholder {
-            color: #9ca3af;
-        }
-
-        .dark .input-std::placeholder {
-            color: #64748b;
-        }
+        .dark .input-std { background-color: #334155; border-color: #475569; color: #f1f5f9; }
+        .input-std:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
 
         .tab-btn {
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            border: 1px solid transparent;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            cursor: pointer;
+            padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 600;
+            transition: all 0.3s ease; border: 1px solid transparent; display: flex;
+            align-items: center; justify-content: center; gap: 0.5rem; cursor: pointer;
         }
-
-        .tab-btn.active {
-            background: #dbeafe;
-            color: #1e40af;
-            border-color: #93c5fd;
-            box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
-        }
-
-        .dark .tab-btn.active {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-            border-color: rgba(59, 130, 246, 0.4);
-        }
-
-        .tab-btn.inactive {
-            color: #6b7280;
-            background: transparent;
-            border-color: transparent;
-        }
-
-        .dark .tab-btn.inactive {
-            color: #9ca3af;
-        }
-
-        .tab-btn.inactive:hover {
-            background: #f3f4f6;
-        }
-
-        .dark .tab-btn.inactive:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
+        .tab-btn.active { background: #dbeafe; color: #1e40af; border-color: #93c5fd; }
+        .dark .tab-btn.active { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border-color: rgba(59, 130, 246, 0.4); }
+        .tab-btn.inactive { color: #6b7280; background: transparent; }
+        .dark .tab-btn.inactive { color: #9ca3af; }
 
         .dot-style-btn {
-            padding: 0.5rem;
-            border: 1px solid #e5e7eb;
-            border-radius: 0.5rem;
-            background: white;
-            color: #4b5563;
-            font-size: 0.75rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 0.5rem; border: 1px solid #e5e7eb; border-radius: 0.5rem; background: white;
+            color: #4b5563; font-size: 0.75rem; font-weight: 500; transition: all 0.3s ease; cursor: pointer;
         }
-
-        .dark .dot-style-btn {
-            background: #334155;
-            border-color: #475569;
-            color: #cbd5e1;
-        }
-
-        .dot-style-btn:hover {
-            border-color: #3b82f6;
-            background: #f0f9ff;
-            color: #1e40af;
-        }
-
-        .dark .dot-style-btn:hover {
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        .dot-style-btn.active {
-            background: #dbeafe;
-            border-color: #3b82f6;
-            color: #1e40af;
-            font-weight: 600;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .dark .dot-style-btn.active {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #60a5fa;
-            color: #60a5fa;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
+        .dark .dot-style-btn { background: #334155; border-color: #475569; color: #cbd5e1; }
+        .dot-style-btn.active { background: #dbeafe; border-color: #3b82f6; color: #1e40af; font-weight: 600; }
+        .dark .dot-style-btn.active { background: rgba(59, 130, 246, 0.2); border-color: #60a5fa; color: #60a5fa; }
 
         .color-picker-wrapper {
-            position: relative;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 0.75rem;
-            border: 2px solid #e5e7eb;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            flex-shrink: 0;
+            width: 3rem; height: 3rem; border-radius: 0.75rem; border: 2px solid #e5e7eb;
+            overflow: hidden; cursor: pointer; transition: all 0.3s ease;
         }
+        .color-picker-input { width: 100%; height: 100%; border: 0; padding: 0; cursor: pointer; transform: scale(1.5); }
 
-        .dark .color-picker-wrapper {
-            border-color: #475569;
-        }
+        .blob { position: absolute; filter: blur(80px); z-index: 0; opacity: 0.4; animation: float 10s infinite ease-in-out; }
+        .blob-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: #60a5fa; }
+        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #3b82f6; animation-delay: 2s; }
+        @keyframes float { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(30px, -30px); } }
 
-        .color-picker-wrapper:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-        }
-
-        .color-picker-input {
-            width: 100%;
-            height: 100%;
-            border: 0;
-            padding: 0;
-            cursor: pointer;
-        }
-
-        .blob {
-            position: absolute;
-            filter: blur(80px);
-            z-index: 0;
-            opacity: 0.4;
-            animation: float 10s infinite ease-in-out;
-        }
-
-        .blob-1 {
-            top: -10%;
-            left: -10%;
-            width: 400px;
-            height: 400px;
-            background: #60a5fa;
-            animation-delay: 0s;
-        }
-
-        .blob-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 400px;
-            height: 400px;
-            background: #3b82f6;
-            animation-delay: 2s;
-        }
-        
-        @keyframes float {
-            0%, 100% {
-                transform: translate(0, 0) scale(1);
-            }
-            50% {
-                transform: translate(30px, -30px) scale(1.05);
-            }
-        }
-
-        #video-preview {
-            width: 100%;
-            border-radius: 1rem;
-            transform: scaleX(-1);
-        }
-
+        #video-preview { width: 100%; border-radius: 1rem; transform: scaleX(-1); }
         .scanner-overlay {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            border: 3px solid #60a5fa;
-            border-radius: 1rem;
-            box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.6);
-            z-index: 10;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 250px; height: 250px; border: 3px solid #60a5fa; border-radius: 1rem;
+            box-shadow: 0 0 0 4000px rgba(0, 0, 0, 0.6); z-index: 10;
         }
 
-        .section-title {
-            font-size: 0.875rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6b7280;
-            margin-bottom: 1rem;
-        }
-
-        .dark .section-title {
-            color: #9ca3af;
-        }
-
-        .label-text {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #6b7280;
-            margin-bottom: 0.5rem;
-            display: block;
-        }
-
-        .dark .label-text {
-            color: #9ca3af;
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
-            margin: 1.5rem 0;
-        }
-
-        .dark .divider {
-            background: linear-gradient(90deg, transparent, #475569, transparent);
-        }
-
-        .card-panel {
-            background: white;
-            border: 1px solid #e5e7eb;
-            border-radius: 1rem;
-            padding: 1.25rem;
-            transition: all 0.3s ease;
-        }
-
-        .dark .card-panel {
-            background: #334155;
-            border-color: #475569;
-        }
-
-        .card-panel:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-        }
-
-        .dark .card-panel:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
-        }
-
-        .success-badge {
-            background: #dbeafe;
-            color: #1e40af;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.025em;
-        }
-
-        .dark .success-badge {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-        }
-
-        .error-badge {
-            background: #fee2e2;
-            color: #991b1b;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        .dark .error-badge {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
-        }
-
+        .left-panel { transition: transform 0.3s ease; }
         @media (max-width: 1024px) {
-            .left-panel {
-                position: absolute;
-                left: 0;
-                top: 0;
-                height: 100%;
-                width: 100%;
-                z-index: 50;
-                transform: translateX(0);
-                transition: transform 0.3s ease;
-                box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
-            }
-
-            .left-panel.hidden-mobile {
-                transform: translateX(-100%);
-            }
+            .left-panel { position: absolute; left: 0; top: 0; height: 100%; width: 100%; z-index: 50; }
+            .left-panel.hidden-mobile { transform: translateX(-100%); }
         }
     </style>
 </head>
@@ -479,7 +157,7 @@
                 <i id="theme-icon" class="fa-solid fa-moon text-lg"></i>
             </button>
             <div class="text-xs font-bold text-white bg-gradient-to-r from-blue-600 to-blue-700 px-3 py-1.5 rounded-lg hidden sm:block shadow-md">
-                v4.1
+                v4.2
             </div>
         </div>
     </nav>
@@ -488,12 +166,12 @@
     <div class="flex flex-1 overflow-hidden relative z-10">
         
         <!-- LEFT PANEL -->
-        <div class="left-panel w-full lg:w-[420px] bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col overflow-y-auto shadow-xl dark:shadow-2xl z-20 transition-transform duration-300">
+        <div class="left-panel w-full lg:w-[420px] bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col overflow-y-auto shadow-xl dark:shadow-2xl z-20">
             
             <!-- Mobile Header -->
             <div class="lg:hidden flex justify-between items-center p-5 border-b border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800">
                 <h2 class="font-bold text-gray-800 dark:text-white">Settings</h2>
-                <button onclick="closeMobilePanel()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors">
+                <button onclick="closeMobilePanel()" class="w-8 h-8 flex items-center justify-center rounded-lg bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300">
                     <i class="fa-solid fa-xmark"></i>
                 </button>
             </div>
@@ -501,12 +179,10 @@
             <!-- Tabs -->
             <div class="grid grid-cols-2 p-5 gap-3 sticky top-0 bg-white dark:bg-slate-800 backdrop-blur-sm z-30 border-b border-gray-200 dark:border-slate-700">
                 <button onclick="switchTab('generator')" id="btn-generator" class="tab-btn active">
-                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i> 
-                    <span>Generator</span>
+                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i> <span>Generator</span>
                 </button>
                 <button onclick="switchTab('scanner')" id="btn-scanner" class="tab-btn inactive">
-                    <i class="fa-solid fa-camera text-sm"></i> 
-                    <span>Scanner</span>
+                    <i class="fa-solid fa-camera text-sm"></i> <span>Scanner</span>
                 </button>
             </div>
 
@@ -516,23 +192,17 @@
                 <div id="tab-generator" class="space-y-6">
                     
                     <!-- Mode Selector -->
-                    <div>
-                        <div class="flex items-center justify-between mb-3">
-                            <span class="section-title">Mode</span>
-                            <div class="inline-flex bg-gray-100 dark:bg-slate-700 rounded-lg p-1 gap-1">
-                                <button onclick="setMode('qr')" id="btn-sub-qr" class="px-3 py-1.5 text-xs font-bold rounded-md bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm transition-all hover:shadow-md">
-                                    QR
-                                </button>
-                                <button onclick="setMode('barcode')" id="btn-sub-barcode" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 transition-all">
-                                    Barcode
-                                </button>
-                            </div>
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Mode</span>
+                        <div class="inline-flex bg-gray-100 dark:bg-slate-700 rounded-lg p-1 gap-1">
+                            <button onclick="setMode('qr')" id="btn-sub-qr" class="px-3 py-1.5 text-xs font-bold rounded-md bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm transition-all">QR</button>
+                            <button onclick="setMode('barcode')" id="btn-sub-barcode" class="px-3 py-1.5 text-xs font-bold rounded-md text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-300 transition-all">Barcode</button>
                         </div>
                     </div>
 
                     <!-- QR Type Selector -->
                     <div id="qr-types-container">
-                        <span class="label-text">Type QR Code</span>
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Type QR Code</span>
                         <div class="input-icon-wrap">
                             <i class="fa-solid fa-layer-group"></i>
                             <select id="qr-type" onchange="updateUI()" class="input-std cursor-pointer appearance-none pr-10">
@@ -548,7 +218,7 @@
 
                     <!-- Barcode Type Selector -->
                     <div id="barcode-types-container" class="hidden">
-                        <span class="label-text">Barcode Format</span>
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Barcode Format</span>
                         <div class="input-icon-wrap">
                             <i class="fa-solid fa-barcode"></i>
                             <select id="barcode-format" onchange="generateBarcode()" class="input-std cursor-pointer appearance-none pr-10">
@@ -561,13 +231,13 @@
                         </div>
                     </div>
 
-                    <div class="divider"></div>
+                    <div class="h-px bg-gray-200 dark:bg-slate-700 my-4"></div>
 
                     <!-- Dynamic Inputs -->
                     <div class="space-y-4">
                         <!-- URL Input -->
                         <div id="inp-grp-url" class="inp-group">
-                            <span class="label-text">Target URL</span>
+                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Target URL</span>
                             <div class="input-icon-wrap">
                                 <i class="fa-solid fa-link"></i>
                                 <input type="text" id="val-url" placeholder="https://example.com" class="input-std" oninput="updatePreview()">
@@ -576,9 +246,9 @@
                         
                         <!-- Text Input -->
                         <div id="inp-grp-text" class="inp-group hidden">
-                            <span class="label-text">Text Content</span>
+                            <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Text Content</span>
                             <div class="input-icon-wrap">
-                                <i class="fa-solid fa-align-left"></i>
+                                <i class="fa-solid fa-align-left top-4 transform-none mt-1"></i>
                                 <textarea id="val-text" rows="3" placeholder="Enter your text..." class="input-std pl-10 py-3 resize-none" oninput="updatePreview()"></textarea>
                             </div>
                         </div>
@@ -586,14 +256,14 @@
                         <!-- WiFi Inputs -->
                         <div id="inp-grp-wifi" class="inp-group hidden space-y-4">
                             <div>
-                                <span class="label-text">WiFi Name (SSID)</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">WiFi Name (SSID)</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-wifi"></i>
                                     <input type="text" id="wifi-ssid" placeholder="Network name" class="input-std" oninput="updatePreview()">
                                 </div>
                             </div>
                             <div>
-                                <span class="label-text">WiFi Password</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">WiFi Password</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-key"></i>
                                     <input type="text" id="wifi-pass" placeholder="Password" class="input-std" oninput="updatePreview()">
@@ -601,7 +271,7 @@
                             </div>
                             <div class="flex gap-3">
                                 <div class="flex-1">
-                                    <span class="label-text">Security</span>
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Security</span>
                                     <select id="wifi-enc" class="input-std cursor-pointer appearance-none pr-8" onchange="updatePreview()">
                                         <option value="WPA">WPA/WPA2</option>
                                         <option value="WEP">WEP</option>
@@ -609,10 +279,10 @@
                                     </select>
                                 </div>
                                 <div class="flex-1">
-                                    <span class="label-text">Options</span>
-                                    <div class="h-10 flex items-center px-3 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-lg">
-                                        <input type="checkbox" id="wifi-hidden" class="accent-blue-500 cursor-pointer" onchange="updatePreview()">
-                                        <label for="wifi-hidden" class="text-xs font-medium ml-2 cursor-pointer">Hidden</label>
+                                    <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Options</span>
+                                    <div class="h-11 flex items-center px-3 bg-f9fafb dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl">
+                                        <input type="checkbox" id="wifi-hidden" class="accent-blue-500 cursor-pointer w-4 h-4" onchange="updatePreview()">
+                                        <label for="wifi-hidden" class="text-xs font-medium ml-2 cursor-pointer text-gray-700 dark:text-gray-300">Hidden</label>
                                     </div>
                                 </div>
                             </div>
@@ -621,32 +291,31 @@
                         <!-- WhatsApp Inputs -->
                         <div id="inp-grp-wa" class="inp-group hidden space-y-4">
                             <div>
-                                <span class="label-text">Phone Number</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Phone Number</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-phone"></i>
                                     <input type="number" id="wa-num" placeholder="628123456789" class="input-std" oninput="updatePreview()">
                                 </div>
                             </div>
                             <div>
-                                <span class="label-text">Message</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Message</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-comment-dots"></i>
                                     <input type="text" id="wa-msg" placeholder="Hello, I want to..." class="input-std" oninput="updatePreview()">
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Email Inputs -->
-                        <div id="inp-grp-email" class="inp-group hidden space-y-4">
+                         <!-- Email Inputs -->
+                         <div id="inp-grp-email" class="inp-group hidden space-y-4">
                             <div>
-                                <span class="label-text">Email Address</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Email Address</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-envelope"></i>
                                     <input type="email" id="email-addr" placeholder="recipient@email.com" class="input-std" oninput="updatePreview()">
                                 </div>
                             </div>
                             <div>
-                                <span class="label-text">Subject</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Subject</span>
                                 <div class="input-icon-wrap">
                                     <i class="fa-solid fa-heading"></i>
                                     <input type="text" id="email-sub" placeholder="Email subject" class="input-std" oninput="updatePreview()">
@@ -655,18 +324,18 @@
                         </div>
                     </div>
 
-                    <div class="divider"></div>
+                    <div class="h-px bg-gray-200 dark:bg-slate-700 my-4"></div>
 
                     <!-- Styling Section -->
                     <div id="section-style">
-                        <h3 class="section-title mb-4">Personalization</h3>
+                        <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">Personalization</h3>
 
                         <!-- QR Styles -->
                         <div id="style-qr-controls" class="space-y-6">
                             
                             <!-- Dot Style -->
                             <div>
-                                <span class="label-text">Dot Pattern</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Dot Pattern</span>
                                 <div class="grid grid-cols-3 gap-2">
                                     <button onclick="setQrDots('square')" data-type="square" class="dot-style-btn">Squares</button>
                                     <button onclick="setQrDots('dots')" data-type="dots" class="dot-style-btn active">Dots</button>
@@ -679,29 +348,29 @@
 
                             <!-- Colors -->
                             <div>
-                                <span class="label-text">Colors</span>
-                                <div class="card-panel space-y-4">
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Colors</span>
+                                <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 space-y-4">
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm">Primary Color</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Primary Color</span>
                                         <div class="color-picker-wrapper">
                                             <input type="color" id="color-1" value="#3b82f6" class="color-picker-input" onchange="updatePreview()">
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm">Gradient Color</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Gradient Color</span>
                                         <div class="color-picker-wrapper">
                                             <input type="color" id="color-2" value="#2563eb" class="color-picker-input" onchange="updatePreview()">
                                         </div>
                                     </div>
                                     <div class="flex items-center justify-between">
-                                        <span class="text-sm">Background</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Background</span>
                                         <div class="color-picker-wrapper">
                                             <input type="color" id="bg-color" value="#ffffff" class="color-picker-input" onchange="updatePreview()">
                                         </div>
                                     </div>
                                     <div>
-                                        <span class="label-text">Gradient Mode</span>
-                                        <select id="gradient-type" class="input-std cursor-pointer appearance-none" onchange="updatePreview()">
+                                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Gradient Mode</span>
+                                        <select id="gradient-type" class="input-std cursor-pointer appearance-none p-2" onchange="updatePreview()">
                                             <option value="linear">Linear Gradient</option>
                                             <option value="radial">Radial Gradient</option>
                                             <option value="none">Solid Color</option>
@@ -712,7 +381,7 @@
 
                             <!-- Logo Upload -->
                             <div>
-                                <span class="label-text">Logo (Optional)</span>
+                                <span class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-1 block">Logo (Optional)</span>
                                 <label class="flex flex-col items-center gap-3 w-full p-4 bg-gray-50 dark:bg-slate-700 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg cursor-pointer hover:border-blue-500 dark:hover:border-blue-400 transition-colors group">
                                     <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform">
                                         <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
@@ -726,25 +395,25 @@
                             </div>
                         </div>
 
-                        <!-- Barcode Styles -->
-                        <div id="style-barcode-controls" class="hidden space-y-4">
-                            <div class="card-panel space-y-4">
+                         <!-- Barcode Styles -->
+                         <div id="style-barcode-controls" class="hidden space-y-4">
+                            <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-4 space-y-4">
                                 <div class="flex items-center justify-between">
-                                    <span class="text-sm font-medium">Barcode Color</span>
+                                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Barcode Color</span>
                                     <div class="color-picker-wrapper">
                                         <input type="color" id="barcode-color" value="#000000" class="color-picker-input" onchange="updatePreview()">
                                     </div>
                                 </div>
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium">Line Width</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Line Width</span>
                                         <span class="text-xs font-bold text-blue-600 dark:text-blue-400" id="bw-val">2</span>
                                     </div>
                                     <input type="range" id="bar-width" min="1" max="4" value="2" class="w-full h-2 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updatePreview(); document.getElementById('bw-val').innerText = this.value;">
                                 </div>
                                 <div>
                                     <div class="flex justify-between mb-2">
-                                        <span class="text-sm font-medium">Height</span>
+                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Height</span>
                                         <span class="text-xs font-bold text-blue-600 dark:text-blue-400" id="bh-val">80</span>
                                     </div>
                                     <input type="range" id="bar-height" min="30" max="150" value="80" class="w-full h-2 bg-gray-200 dark:bg-slate-600 rounded-lg appearance-none cursor-pointer accent-blue-500" oninput="updatePreview(); document.getElementById('bh-val').innerText = this.value;">
@@ -754,16 +423,16 @@
                     </div>
 
                     <!-- Mobile Download -->
-                    <div class="lg:hidden fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white dark:from-slate-800 via-white dark:via-slate-800 to-transparent">
-                        <button onclick="downloadCode()" class="btn-primary w-full text-lg py-4">
-                            <i class="fa-solid fa-download"></i> Download PNG
+                    <div class="lg:hidden fixed bottom-0 left-0 right-0 p-5 bg-gradient-to-t from-white dark:from-slate-800 via-white dark:via-slate-800 to-transparent z-40">
+                        <button onclick="downloadCode()" class="btn-primary w-full text-lg py-4 shadow-xl">
+                            <i class="fa-solid fa-download mr-2"></i> Download PNG
                         </button>
                     </div>
                 </div>
 
                 <!-- SCANNER TAB -->
                 <div id="tab-scanner" class="hidden space-y-6">
-                    <div class="card-panel text-center">
+                    <div class="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 text-center">
                         <div class="w-16 h-16 mx-auto bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center mb-4">
                             <i class="fa-solid fa-camera text-2xl text-blue-600 dark:text-blue-400"></i>
                         </div>
@@ -772,10 +441,10 @@
                         
                         <div class="space-y-3">
                             <button onclick="startCamera()" class="btn-primary w-full">
-                                <i class="fa-solid fa-video"></i> Open Camera
+                                <i class="fa-solid fa-video mr-2"></i> Open Camera
                             </button>
                             <button onclick="document.getElementById('scan-image-upload').click()" class="btn-secondary w-full">
-                                <i class="fa-solid fa-image"></i> Upload Image
+                                <i class="fa-solid fa-image mr-2"></i> Upload Image
                             </button>
                             <input type="file" id="scan-image-upload" accept="image/*" class="hidden" onchange="scanImageFile()">
                         </div>
@@ -783,29 +452,29 @@
 
                     <!-- Camera Container -->
                     <div id="camera-container" class="hidden relative rounded-2xl overflow-hidden bg-black shadow-2xl">
-                        <video id="video-preview" playsinline class="w-full h-full"></video>
+                        <video id="video-preview" playsinline class="w-full h-full object-cover"></video>
                         <div class="scanner-overlay"></div>
                         <button onclick="stopCamera()" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg transition-colors">
-                            <i class="fa-solid fa-stop"></i> Stop
+                            <i class="fa-solid fa-stop mr-2"></i> Stop
                         </button>
                     </div>
                     
                     <!-- Scan Result -->
                     <div id="scan-result-container" class="hidden">
-                        <div class="card-panel bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 border-2">
+                        <div class="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl p-4">
                             <div class="flex justify-between items-start mb-3">
-                                <span class="success-badge">Success</span>
+                                <span class="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 text-xs font-bold px-2 py-1 rounded">SUCCESS</span>
                                 <button onclick="copyScanResult()" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition-colors" title="Copy">
                                     <i class="fa-regular fa-copy text-lg"></i>
                                 </button>
                             </div>
                             <p id="scan-result-text" class="font-mono text-sm text-gray-800 dark:text-gray-200 break-all mb-4"></p>
                             <div class="flex gap-2">
-                                <button onclick="useScanResultAsQR()" class="btn-primary flex-1 text-sm">
-                                    <i class="fa-solid fa-pencil"></i> Edit
+                                <button onclick="useScanResultAsQR()" class="btn-primary flex-1 text-sm py-2">
+                                    <i class="fa-solid fa-pencil mr-1"></i> Edit
                                 </button>
-                                <button onclick="clearScanResult()" class="btn-secondary flex-1 text-sm">
-                                    <i class="fa-solid fa-xmark"></i> Close
+                                <button onclick="clearScanResult()" class="btn-secondary flex-1 text-sm py-2">
+                                    <i class="fa-solid fa-xmark mr-1"></i> Close
                                 </button>
                             </div>
                         </div>
@@ -813,8 +482,8 @@
                     
                     <!-- Scan Error -->
                     <div id="scan-error-container" class="hidden">
-                        <div class="card-panel bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 border-2 text-center">
-                            <span class="error-badge">Error</span>
+                        <div class="bg-red-50 dark:bg-red-900/20 border-2 border-red-200 dark:border-red-800 rounded-xl p-4 text-center">
+                            <span class="bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 text-xs font-bold px-2 py-1 rounded">ERROR</span>
                             <p class="text-sm text-red-600 dark:text-red-400 mt-2" id="scan-error-text">Error message</p>
                             <button onclick="clearScanError()" class="text-xs text-red-500 dark:text-red-400 underline mt-3">Close</button>
                         </div>
@@ -828,12 +497,13 @@
             
             <div class="glass-panel p-12 rounded-3xl shadow-2xl relative z-20 flex flex-col items-center transform hover:scale-[1.01] transition-transform duration-500">
                 
-                <div id="canvas-container" class="bg-white dark:bg-slate-700 rounded-2xl overflow-hidden flex items-center justify-center min-w-[320px] min-h-[320px] shadow-inner">
+                <div id="canvas-container" class="bg-white rounded-2xl overflow-hidden flex items-center justify-center min-w-[320px] min-h-[320px] shadow-inner p-4">
+                    <!-- QR Generated Here -->
                 </div>
                 
                 <div class="mt-10 flex gap-4">
                     <button onclick="downloadCode()" class="btn-primary text-base shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50">
-                        <i class="fa-solid fa-cloud-arrow-down"></i> Download PNG
+                        <i class="fa-solid fa-cloud-arrow-down mr-2"></i> Download PNG
                     </button>
                 </div>
                 
@@ -850,6 +520,7 @@
     </div>
 
     <script>
+        // --- Dark Mode Logic ---
         function toggleTheme() {
             const html = document.documentElement;
             const icon = document.getElementById('theme-icon');
@@ -873,6 +544,7 @@
             document.getElementById('theme-icon').classList.add('fa-sun');
         }
 
+        // --- Core Variables ---
         let mode = 'qr';
         let qrCode;
         let uploadedLogo = null;
@@ -882,6 +554,7 @@
         let scanningActive = false;
         let scanIntervalId = null;
 
+        // --- Initialization ---
         window.addEventListener('load', () => {
             if (window.ZXing) {
                 const { BrowserMultiFormatReader } = ZXing;
@@ -908,6 +581,7 @@
             updateUI();
         });
 
+        // --- Logic Handlers ---
         function switchTab(tab) {
             document.getElementById('tab-generator').classList.add('hidden');
             document.getElementById('tab-scanner').classList.add('hidden');
@@ -941,6 +615,12 @@
                 document.getElementById('barcode-types-container').classList.add('hidden');
                 document.getElementById('style-qr-controls').classList.remove('hidden');
                 document.getElementById('style-barcode-controls').classList.add('hidden');
+                
+                // IMPORTANT FIX: Re-append QR Code because Barcode mode wipes the container
+                const container = document.getElementById('canvas-container');
+                container.innerHTML = '';
+                qrCode.append(container);
+                
                 updateUI();
             } else {
                 btnBar.className = 'px-3 py-1.5 text-xs font-bold rounded-md bg-white dark:bg-slate-600 text-blue-600 dark:text-blue-400 shadow-sm transition-all hover:shadow-md';
@@ -1069,7 +749,7 @@
                     margin: 10
                 });
             } catch (e) {
-                container.innerHTML = '<p class="text-red-500 text-xs font-bold p-4">Invalid Data for ' + format + '</p>';
+                container.innerHTML = '<div class="text-center p-4"><p class="text-red-500 text-xs font-bold mb-1">Invalid Data</p><p class="text-xs text-gray-400">Barcode '+format+' requires specific format</p></div>';
             }
         }
 
@@ -1079,6 +759,8 @@
             } else {
                 try {
                     const svg = document.querySelector('#barcode-svg');
+                    if (!svg) { alert("Barcode not generated yet"); return; }
+                    
                     const serializer = new XMLSerializer();
                     const svgStr = serializer.serializeToString(svg);
                     const canvas = document.createElement('canvas');
@@ -1086,13 +768,13 @@
                     const img = new Image();
                     
                     const svgRect = svg.getBoundingClientRect();
-                    canvas.width = svgRect.width + 20;
-                    canvas.height = svgRect.height + 20;
+                    canvas.width = svgRect.width + 40; 
+                    canvas.height = svgRect.height + 40;
                     
                     img.onload = () => {
                         ctx.fillStyle = '#ffffff';
                         ctx.fillRect(0, 0, canvas.width, canvas.height);
-                        ctx.drawImage(img, 10, 10);
+                        ctx.drawImage(img, 20, 20);
                         const link = document.createElement('a');
                         link.download = 'barcode_studio_pro.png';
                         link.href = canvas.toDataURL('image/png');
@@ -1105,6 +787,7 @@
             }
         }
 
+        // --- Camera & Scanning Logic ---
         async function startCamera() {
             try {
                 document.getElementById('camera-container').classList.remove('hidden');
@@ -1133,8 +816,7 @@
                             showResult(result.getText());
                             stopCamera();
                         }
-                    } catch (e) {
-                    }
+                    } catch (e) {}
                 }, 500);
             } catch (e) {
                 document.getElementById('scan-error-container').classList.remove('hidden');
@@ -1202,15 +884,14 @@
         function useScanResultAsQR() {
             const txt = document.getElementById('scan-result-text').innerText;
             switchTab('generator');
+            
+            // Auto-detect type roughly
             if (txt.includes('http')) {
                 document.getElementById('qr-type').value = 'url';
                 document.getElementById('val-url').value = txt;
             } else if (txt.includes('WIFI:')) {
                 document.getElementById('qr-type').value = 'wifi';
-            } else if (txt.includes('mailto:')) {
-                document.getElementById('qr-type').value = 'email';
-            } else if (txt.includes('wa.me')) {
-                document.getElementById('qr-type').value = 'whatsapp';
+                // Note: Parsing WIFI string is complex, user might need to fill manually or we implement parser later
             } else {
                 document.getElementById('qr-type').value = 'text';
                 document.getElementById('val-text').value = txt;
